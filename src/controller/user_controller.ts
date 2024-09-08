@@ -1,7 +1,8 @@
 import express from "express";
 import Database from "../config/database";
 import { Db, ObjectId } from "mongodb";
-import userModel from "../model/user_model";
+import UserSignUpModel from "../model/user_signup_model";
+import { UserLoginModel } from "../model/user_login_model";
 
 class UserController {
     static async signup(request: express.Request, response: express.Response) {
@@ -10,9 +11,9 @@ class UserController {
             let database: Db = await Database.getDatabase();
             console.log("Database connection successful");
 
-           
 
-            let body: userModel = request.body;
+
+            let body: UserSignUpModel = request.body;
 
             let checking = {
                 email: body.email
@@ -35,7 +36,7 @@ class UserController {
                     'phone Number': body.phoneNumber.toString(),
                     'Bags': {
                         'Number Of Bag': 0,
-                        'bag items' : {}
+                        'bag items': {}
                     },
                     'medical Information': {
                         "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
@@ -67,7 +68,48 @@ class UserController {
         }
 
 
+
     }
+    static async login(request: express.Request, response: express.Response) {
+        try {
+            let database: Db = await Database.getDatabase();
+            let body: UserLoginModel = request.body;
+
+            let checking = {
+                email: body.email,
+                password: body.password
+            }
+
+            let collection = database.collection('users');
+            let responseCheck = await collection.find(checking).toArray();
+
+            if (responseCheck.length !== 0) {
+                return response.status(200).send({
+                    "status": "Success",
+                    "response": 'SuccessFuly Logined',
+                    'User Data' : responseCheck
+                });
+            }
+            else {
+                response.status(403).send({
+                    "status": "Failure",
+                    "response": "Email Not Exist"
+                });
+            }
+
+
+
+        } catch (error) {
+            console.error("Login Error:", error instanceof Error ? error.message : error);
+            response.status(500).send({
+                "status": "Error",
+                "response": "An unexpected error occurred.",
+                "details": error instanceof Error ? error.message : "Unknown error"
+            });
+
+        }
+    }
+
 }
 
 export default UserController;

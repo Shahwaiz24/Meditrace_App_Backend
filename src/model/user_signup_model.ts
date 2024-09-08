@@ -1,4 +1,4 @@
-interface userModel {
+interface UserSignUpModel {
     fullname: string;
     email: string;
     password: string;
@@ -15,4 +15,4 @@ interface userModel {
 
 }
 
-export default userModel;
+export default UserSignUpModel;

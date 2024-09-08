@@ -40,15 +40,15 @@ class Database {
 
     }
     static async getDatabase() {
-        console.log(`Database : ${database.databaseName}`);
-        return database;
-    //    if (database == undefined) {
-    //        await Database.connectToDatabase()
-    //        return database;
-    //    }
-    //    else {
-    //        return database;
-    //    }
+        // console.log(`Database : ${database.databaseName}`);
+        // return database;
+       if (database == undefined) {
+           await Database.connectToDatabase()
+           return database;
+       }
+       else {
+           return database;
+       }
     }
 }
 
