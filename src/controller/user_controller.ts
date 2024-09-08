@@ -8,6 +8,7 @@ class UserController {
 
         try {
             let database: Db = await Database.getDatabase();
+            console.log(`Database : ${database}`);
 
             let body: userModel = request.body;
 
@@ -29,9 +30,16 @@ class UserController {
                     'fullname': body.fullname.toString(),
                     'email': body.email.toString(),
                     'password': body.password.toString(),
-                    'phone Number': body.phoneNumber,
-                    'medical Information': body.medicalInformation,
-                    'emergency Contact': body.emergency_Contact,
+                    'phone Number': body.phoneNumber.toString(),
+                    'medical Information': {
+                        "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
+                        "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
+                        "Medications": body.medicalInformation.Medications.toString(),
+                    },
+                    'emergency Contact': {
+                        "contactName": body.emergency_Contact.contactName.toString(),
+                        "contactNumber": body.emergency_Contact.contactNumber.toString()
+                    },
                 };
                 let responsedata = await collection.insertOne(insertingBody);
                 let User_Id = responsedata.insertedId;
@@ -55,3 +63,5 @@ class UserController {
 
     }
 }
+
+export default UserController;
