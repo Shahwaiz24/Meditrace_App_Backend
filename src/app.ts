@@ -3,7 +3,7 @@ import AppLoger from './App Loger/app_loger';
 import Database from './config/database';
 
 const app: express.Application = express();
-
+app.use(express.json());
 app.use(AppLoger);
 
 const port = 5000;
