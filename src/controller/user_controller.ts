@@ -4,11 +4,13 @@ import { Db, ObjectId } from "mongodb";
 import userModel from "../model/user_model";
 
 class UserController {
-    static async signUp(request: express.Request, response: express.Response) {
+    static async signup(request: express.Request, response: express.Response) {
 
         try {
             let database: Db = await Database.getDatabase();
-            console.log(`Database : ${database}`);
+            console.log("Database connection successful");
+
+           
 
             let body: userModel = request.body;
 
@@ -31,6 +33,10 @@ class UserController {
                     'email': body.email.toString(),
                     'password': body.password.toString(),
                     'phone Number': body.phoneNumber.toString(),
+                    'Bags': {
+                        'Number Of Bag': 0,
+                        'bag items' : {}
+                    },
                     'medical Information': {
                         "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
                         "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),

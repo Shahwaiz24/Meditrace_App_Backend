@@ -39,14 +39,16 @@ class Database {
 
 
     }
-   static async getDatabase() {
-       if (database == undefined) {
-           await Database.connectToDatabase()
-           return database;
-       }
-       else {
-           return database;
-       }
+    static async getDatabase() {
+        console.log(`Database : ${database.databaseName}`);
+        return database;
+    //    if (database == undefined) {
+    //        await Database.connectToDatabase()
+    //        return database;
+    //    }
+    //    else {
+    //        return database;
+    //    }
     }
 }
 

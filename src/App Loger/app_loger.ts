@@ -8,6 +8,7 @@ let AppLoger = async (request: express.Request, response: express.Response, next
     let url = request.url;
     let method = request.method;
     console.log(`${date} | ${time} | ${method} | ${url}`);
+    next();
 
 }
 
