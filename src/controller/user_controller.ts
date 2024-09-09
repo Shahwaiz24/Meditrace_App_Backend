@@ -35,10 +35,8 @@ class UserController {
                     'email': body.email.toString(),
                     'password': body.password.toString(),
                     'phone Number': body.phoneNumber.toString(),
-                    'Bags': {
-                        'Number Of Bag': 0,
-                        'Bags': []
-                    },
+                    'Number Of Bag': 0,
+                    'BagsDetails': [],
                     'medical Information': {
                         "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
                         "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
