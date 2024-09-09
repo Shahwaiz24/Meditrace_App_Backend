@@ -20,44 +20,53 @@ export class BagController {
             // Find the user by their ObjectId
             let user = await collection.findOne({ _id: userId });
 
-            // Check if the bag already exists in BagsDetails
-            let existingBag = user?.BagsDetails?.find((bag: BagDetail) => bag.bagname === body.bagname);
+            if (!user) {
+                response.status(403).send({
+                    "Status": "Failure",
+                    "response": "User Not Exist"
+                })
+            }
+            else {
+                // Check if the bag already exists in BagsDetails
+                let existingBag = user.BagsDetails?.find((bag: BagDetail) => bag.bagname === body.bagname);
 
-            if (existingBag) {
-                // Bag already exists, return it
-                return response.status(409).send({
-                    'Status': 'Failure',
-                    'response': 'Bag already exists',
-                    'bag': existingBag
-                });
-            } else {
-                // Add the new bag
-                let newBag: BagDetail = {
-                    bagname: body.bagname,
-                    medications: [] // Initialize with an empty array or add initial medications if any
-                };
+                if (existingBag) {
+                    // Bag already exists, return it
+                    return response.status(409).send({
+                        'Status': 'Failure',
+                        'response': 'Bag already exists',
+                    });
+                } else {
+                    // Add the new bag
+                    let newBag: BagDetail = {
+                        bagname: body.bagname,
+                        medications: [] // Initialize with an empty array or add initial medications if any
+                    };
 
-                // Ensure BagsDetails is initialized
-                let bagsList: BagDetail[] = user?.BagsDetails || [];
-                bagsList.push(newBag);
+                    // Ensure BagsDetails is initialized
+                    let bagsList: BagDetail[] = user?.BagsDetails || [];
+                    bagsList.push(newBag);
 
-                // Update the user's BagsDetails and increment the number of bags
-                await collection.updateOne(
-                    { "_id": userId },
-                    {
-                        $set: { "BagsDetails": bagsList },
-                        $inc: { "Number Of Bag": 1 }
-                    }
-                );
+                    // Update the user's BagsDetails and increment the number of bags
+                    await collection.updateOne(
+                        { "_id": userId },
+                        {
+                            $set: { "BagsDetails": bagsList },
+                            $inc: { "Number Of Bag": 1 }
+                        }
+                    );
 
-                // Fetch the updated user to return
-                let updatedUser = await collection.findOne({ _id: userId });
+                    // Fetch the updated user to return
+                    let updatedUser = await collection.findOne({ _id: userId });
 
-                return response.status(200).send({
-                    'Status': 'Success',
-                    'response': 'Bag added successfully',
-                    'user': updatedUser
-                });
+                    return response.status(200).send({
+                        'Status': 'Success',
+                        'response': 'Bag added successfully',
+                        'user': updatedUser
+                    });
+                }
+
+
             }
 
         } catch (error) {
