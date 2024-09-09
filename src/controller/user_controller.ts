@@ -37,7 +37,7 @@ class UserController {
                     'phone Number': body.phoneNumber.toString(),
                     'Bags': {
                         'Number Of Bag': 0,
-                        'bag items': {}
+                        'Bags': []
                     },
                     'medical Information': {
                         "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
