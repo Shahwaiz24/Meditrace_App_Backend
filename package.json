@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "nodemon src/app.ts",
-    "git": "git add . && git commit -m 'Updated Code'"
+    "git": "git add ."
   },
   "keywords": [],
   "author": "",
