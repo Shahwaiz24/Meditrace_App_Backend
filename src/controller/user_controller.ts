@@ -42,7 +42,7 @@ class UserController {
                         "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
                         "Medications": body.medicalInformation.Medications.toString(),
                     },
-                    'emergency Contact': [
+                    'emergencyContact': [
                         {
                             "contactName": body.emergency_Contact.contactName.toString(),
                             "contactNumber": body.emergency_Contact.contactNumber.toString()
@@ -175,13 +175,49 @@ class UserController {
 
             let collection = database.collection('users');
 
-            let checking = await collection.find({ "_id": new ObjectId(body.userId) });
+            let user = await collection.findOne({ "_id": new ObjectId(body.userId) });
 
-            
+            if (!user) {
+                response.status(403).send({
+                    "Status": "Failure",
+                    "response": "User Do Not Exist"
+                });
+            }
+            else {
+                let emergencyContacts = user.emergencyContacts;
+                let newContact = {
+                    "contactName": body.contactname.toString(),
+                    "contactNumber": body.contactNumber.toString()
+                };
+                emergencyContacts.push(newContact);
+                await collection.updateOne(
+                    { "_id": new ObjectId(body.userId) },
+                    {
+                        $set: {
+                            "emergencyContacts": emergencyContacts
+                        }
+                    }
+                );
+                let updatedUser = await collection.findOne({ "_id": new ObjectId(body.userId) });
+
+                return response.status(200).send({
+                    "Status": "Success",
+                    "response": "Emergency contact added successfully",
+                    "emergencyContacts": updatedUser?.emergencyContacts // Return updated contact list
+                });
+
+                
+}
+
 
             
         } catch (error) {
-            
+            console.error("Add Emergency Contact Error:", error instanceof Error ? error.message : error);
+            return response.status(500).send({
+                "Status": "Error",
+                "response": "An unexpected error occurred.",
+                "details": error instanceof Error ? error.message : 'Unknown error'
+            });
         }
     }
 
