@@ -10,6 +10,10 @@ UserRouter.post('/login', UserController.login);
 UserRouter.put('/updateProfile', UserController.updateProfile);
 UserRouter.post('/addBag', BagController.addBag);
 UserRouter.post('/addMedication', MedicationController.addMedication);
+UserRouter.post('/addEmergencyContact', UserController.addEmergencyContact);
+UserRouter.post('/deleteEmergencyContact', UserController.deleteEmergencyContact);
+
+
 
 
 

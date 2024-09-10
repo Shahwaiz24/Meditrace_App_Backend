@@ -5,6 +5,7 @@ import UserSignUpModel from "../model/user_signup_model";
 import { UserLoginModel } from "../model/user_login_model";
 import { UserProfileUpdateModel } from "../model/user_profile_update_model";
 import { AddEmergencyContact } from "../model/user_add_emergency_contact_model";
+import { DeleteEmergencyContact } from "../model/user_delete_emergency_contact";
 
 class UserController {
     static async signup(request: express.Request, response: express.Response) {
@@ -42,7 +43,7 @@ class UserController {
                         "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
                         "Medications": body.medicalInformation.Medications.toString(),
                     },
-                    'emergencyContact': [
+                    'emergencyContacts': [
                         {
                             "contactName": body.emergency_Contact.contactName.toString(),
                             "contactNumber": body.emergency_Contact.contactNumber.toString()
@@ -88,7 +89,7 @@ class UserController {
                 return response.status(200).send({
                     "status": "Success",
                     "response": 'SuccessFuly Logined',
-                    'User Data' : responseCheck
+                    'User Data': responseCheck
                 });
             }
             else {
@@ -171,46 +172,59 @@ class UserController {
 
             let body: AddEmergencyContact = request.body;
 
-           
-
             let collection = database.collection('users');
 
+            // Find user by ID
             let user = await collection.findOne({ "_id": new ObjectId(body.userId) });
 
             if (!user) {
-                response.status(403).send({
+                return response.status(403).send({
                     "Status": "Failure",
-                    "response": "User Do Not Exist"
+                    "response": "User Does Not Exist"
                 });
-            }
-            else {
-                let emergencyContacts = user.emergencyContacts;
-                let newContact = {
-                    "contactName": body.contactname.toString(),
-                    "contactNumber": body.contactNumber.toString()
-                };
-                emergencyContacts.push(newContact);
-                await collection.updateOne(
-                    { "_id": new ObjectId(body.userId) },
-                    {
-                        $set: {
-                            "emergencyContacts": emergencyContacts
+            } else {
+                // Initialize emergencyContacts if it doesn't exist
+                let emergencyContacts = user.emergencyContacts || [];
+
+                // Check if a contact with the same contactNumber already exists
+                let contactExists = emergencyContacts.some((contact: any) => contact.contactNumber === body.contactNumber.toString());
+
+                if (contactExists) {
+                    return response.status(400).send({
+                        "Status": "Failure",
+                        "response": "Contact Already Exists"
+                    });
+                } else {
+                    // Create the new contact object
+                    let newContact = {
+                        "contactName": body.contactname.toString(),
+                        "contactNumber": body.contactNumber.toString()
+                    };
+
+                    // Add the new contact to the array
+                    emergencyContacts.push(newContact);
+
+                    // Update the user document with the new emergencyContacts array
+                    await collection.updateOne(
+                        { "_id": new ObjectId(body.userId) },
+                        {
+                            $set: {
+                                "emergencyContacts": emergencyContacts
+                            }
                         }
-                    }
-                );
-                let updatedUser = await collection.findOne({ "_id": new ObjectId(body.userId) });
+                    );
 
-                return response.status(200).send({
-                    "Status": "Success",
-                    "response": "Emergency contact added successfully",
-                    "emergencyContacts": updatedUser?.emergencyContacts // Return updated contact list
-                });
+                    // Fetch the updated user
+                    let updatedUser = await collection.findOne({ "_id": new ObjectId(body.userId) });
 
-                
-}
+                    return response.status(200).send({
+                        "Status": "Success",
+                        "response": "Emergency contact added successfully",
+                        "emergencyContacts": updatedUser?.emergencyContacts // Return updated contact list
+                    });
+                }
+            }
 
-
-            
         } catch (error) {
             console.error("Add Emergency Contact Error:", error instanceof Error ? error.message : error);
             return response.status(500).send({
@@ -220,7 +234,69 @@ class UserController {
             });
         }
     }
+    static async deleteEmergencyContact(request: express.Request, response: express.Response) {
+        try {
+            let database: Db = await Database.getDatabase();
+
+            let body: DeleteEmergencyContact = request.body;
+
+            let collection = database.collection('users');
+
+            // Find user by ID
+            let user = await collection.findOne({ "_id": new ObjectId(body.userId) });
+
+            if (!user) {
+                return response.status(403).send({
+                    "Status": "Failure",
+                    "response": "User Does Not Exist"
+                });
+            } else {
+                let emergencyContacts = user.emergencyContacts || [];
+
+                // Find the index of the contact to delete
+                const contactIndex = emergencyContacts.findIndex((contact: any) => contact.contactNumber === body.contactNumber);
+
+                // If contact is found, remove it
+                if (contactIndex !== -1) {
+                    emergencyContacts.splice(contactIndex, 1); // Remove the contact from the array
+
+                    // Update the user's emergencyContacts list with the updated array
+                    await collection.updateOne(
+                        { "_id": new ObjectId(body.userId) },
+                        {
+                            $set: {
+                                "emergencyContacts": emergencyContacts
+                            }
+                        }
+                    );
+
+                    // Send the updated emergency contacts back in the response
+                    let updatedUser = await collection.findOne({ "_id": new ObjectId(body.userId) });
+
+                    return response.status(200).send({
+                        "Status": "Success",
+                        "response": "Emergency contact deleted successfully",
+                        "emergencyContacts": updatedUser?.emergencyContacts
+                    });
+                } else {
+                    // If the contact is not found
+                    return response.status(404).send({
+                        "Status": "Failure",
+                        "response": "Emergency contact not found"
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Delete Emergency Contact Error:", error instanceof Error ? error.message : error);
+            return response.status(500).send({
+                "Status": "Error",
+                "response": "An unexpected error occurred.",
+                "details": error instanceof Error ? error.message : 'Unknown error'
+            });
+        }
+    }
 
 }
+
 
 export default UserController;
