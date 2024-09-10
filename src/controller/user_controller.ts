@@ -4,13 +4,13 @@ import { Db, ObjectId, } from "mongodb";
 import UserSignUpModel from "../model/user_signup_model";
 import { UserLoginModel } from "../model/user_login_model";
 import { UserProfileUpdateModel } from "../model/user_profile_update_model";
+import { addEmergencyContact } from "../model/user_add_emergency_contact_model";
 
 class UserController {
     static async signup(request: express.Request, response: express.Response) {
 
         try {
             let database: Db = await Database.getDatabase();
-            console.log("Database connection successful");
 
 
 
@@ -42,10 +42,12 @@ class UserController {
                         "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
                         "Medications": body.medicalInformation.Medications.toString(),
                     },
-                    'emergency Contact': {
-                        "contactName": body.emergency_Contact.contactName.toString(),
-                        "contactNumber": body.emergency_Contact.contactNumber.toString()
-                    },
+                    'emergency Contact': [
+                        {
+                            "contactName": body.emergency_Contact.contactName.toString(),
+                            "contactNumber": body.emergency_Contact.contactNumber.toString()
+                        },
+                    ]
                 };
                 let responsedata = await collection.insertOne(insertingBody);
                 let User_Id = responsedata.insertedId;
@@ -161,6 +163,25 @@ class UserController {
                 'response': 'An unexpected error occurred.',
                 'details': error instanceof Error ? error.message : 'Unknown error'
             });
+        }
+    }
+    static async addEmergencyContact(request: express.Request, response: express.Response) {
+        try {
+            let database: Db = await Database.getDatabase();
+
+            let body: addEmergencyContact = request.body;
+
+           
+
+            let collection = database.collection('users');
+
+            let checking = await collection.find({ "_id": new ObjectId(body.userId) });
+
+            
+
+            
+        } catch (error) {
+            
         }
     }
 
