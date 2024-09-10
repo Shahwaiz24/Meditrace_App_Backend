@@ -4,7 +4,7 @@ import { Db, ObjectId, } from "mongodb";
 import UserSignUpModel from "../model/user_signup_model";
 import { UserLoginModel } from "../model/user_login_model";
 import { UserProfileUpdateModel } from "../model/user_profile_update_model";
-import { addEmergencyContact } from "../model/user_add_emergency_contact_model";
+import { AddEmergencyContact } from "../model/user_add_emergency_contact_model";
 
 class UserController {
     static async signup(request: express.Request, response: express.Response) {
@@ -169,7 +169,7 @@ class UserController {
         try {
             let database: Db = await Database.getDatabase();
 
-            let body: addEmergencyContact = request.body;
+            let body: AddEmergencyContact = request.body;
 
            
 
