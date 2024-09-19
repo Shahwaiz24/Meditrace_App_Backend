@@ -2,12 +2,14 @@
 
 type FrequencyDetails =
     | {
-        frequency: string;
-        intervalDays: number;
+
+        frequency: 'as needed';
+    } | {
+
+        frequency: 'Everyday';
     }
     | {
-        frequency: string;
-        specificDays: string[]; // Use string[] if specificDays is an array of strings, adjust if needed
+        frequency: string[]; // Use string[] if specificDays is an array of strings, adjust if needed
     };
 
 
@@ -18,7 +20,7 @@ export interface MedicationModel {
         MedicationName: string;
         MedicationStrength: string;
         StrengthUnit: string,
-        Frequency: FrequencyDetails,
-        Time : string,
+        Frequency: {},
+        Time: [],
     };
 }

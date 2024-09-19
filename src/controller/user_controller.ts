@@ -32,16 +32,21 @@ class UserController {
             }
             else {
                 let insertingBody = {
-                    'fullname': body.fullname.toString(),
+                    'firstname': body.firstname.toString(),
+                    'lastname' : body.lastname.toString(),
                     'email': body.email.toString(),
                     'password': body.password.toString(),
                     'phone Number': body.phoneNumber.toString(),
+                    'gender': body.gender.toString(),
+                    'birthDate': body.dateofbirth.toString(),
                     'Number Of Bag': 0,
                     'BagsDetails': [],
                     'medical Information': {
                         "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
                         "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
-                        "Medications": body.medicalInformation.Medications.toString(),
+                        "Height": body.medicalInformation.Height.toString(),
+                        "Weight": body.medicalInformation.Weight.toString(),
+                        "Blood_Group": body.medicalInformation.bloodGroup.toString(),
                     },
                     'emergencyContacts': [
                         {
@@ -89,7 +94,7 @@ class UserController {
                 return response.status(200).send({
                     "status": "Success",
                     "response": 'SuccessFuly Logined',
-                    'User Data': responseCheck
+                    'User_Data': responseCheck
                 });
             }
             else {

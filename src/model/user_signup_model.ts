@@ -1,12 +1,17 @@
 interface UserSignUpModel {
-    fullname: string;
+    firstname: string;
+    lastname: string;
     email: string;
     password: string;
     phoneNumber: number;
+    gender: string;
+    dateofbirth: string;
     medicalInformation: {
-        Known_Allergies: string,
-        Chronic_Conditions: string,
-        Medications: string,
+        bloodGroup : string,
+        Weight: string,
+        Height : string,
+        Known_Allergies: [],
+        Chronic_Conditions: [],
     };
     emergency_Contact: {
         contactName: string,
