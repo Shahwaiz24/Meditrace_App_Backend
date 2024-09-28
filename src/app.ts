@@ -18,7 +18,7 @@ const hostname = 'localhost'
 
 app.listen(port, hostname, async () => {
     await Database.connectToDatabase();
-    console.log(`http://${hostname}:${port}`);
+    console.log(`http://${hostname}:${port}/v1/api`);
     // console.log(`Server is running on port ${port}`);
 });
 

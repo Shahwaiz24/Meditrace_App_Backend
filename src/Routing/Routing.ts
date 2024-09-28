@@ -2,10 +2,12 @@ import express from "express";
 import UserController from "../controller/user_controller";
 import { BagController } from "../controller/bag_controller";
 import { MedicationController } from "../controller/medications_controller";
+import OtpController from "../controller/otp_controller";
 
 const UserRouter = express.Router();
 
 UserRouter.post('/signup', UserController.signup);
+UserRouter.post('/send-otp', OtpController.sendOtp);
 UserRouter.post('/login', UserController.login);
 UserRouter.put('/updateProfile', UserController.updateProfile);
 UserRouter.post('/addBag', BagController.addBag);
