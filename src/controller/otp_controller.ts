@@ -19,11 +19,27 @@ export default class OtpController {
         const otp = await crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit OTP
 
         const mailOptions = {
-            from: 'shahwaizafzal90@gmail.com',
+            from: 'Meditrace Team <shahwaizafzal90@gmail.com>',
             to: email,
-            subject: 'Your Password Reset OTP Code Of Your Meditrace Account',
-            text: `Your OTP code is ${otp}`
+            subject: 'Meditrace Account Password Reset OTP',
+            html: `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #F5BB32;">Meditrace OTP Verification</h2>
+            <p>Hello,</p>
+            <p>We received a request to reset the password for your Meditrace account.</p>
+            <p>Your <strong>OTP code</strong> is:</p>
+            <p style="font-size: 24px; font-weight: bold; color: #44BFB9;">${otp}</p>
+            <p>This code is valid for the next 5 minutes. Please do not share this code with anyone.</p>
+            <p>If you did not request a password reset, please ignore this email.</p>
+            <br/>
+            <p>Thank you,</p>
+            <p><strong>Meditrace Team</strong></p>
+        </div>
+    `
         };
+
+
+        
         transporter.sendMail(mailOptions, (error: Error | null, info: any) => {
             if (error) {
                 console.log(`Error Of OTP: ${error}`); // Logs the error to the console
