@@ -3,9 +3,7 @@ import Database from "../config/database";
 import { Db, ObjectId } from "mongodb";
 import { BagModel } from "../model/bag_model";
 
-interface BagDetail {
-    bagname: string;
-}
+
 
 export class BagController {
     static async addBag(request: express.Request, response: express.Response) {
@@ -13,7 +11,7 @@ export class BagController {
             let db: Db = await Database.getDatabase();
             let body: BagModel = request.body;
 
-            let userId = new ObjectId(body.userid); // Assuming userId is passed in the request body.
+            let userId = new ObjectId(body.userid);
             let collection = db.collection('users');
 
             // Find the user by their ObjectId
@@ -27,22 +25,21 @@ export class BagController {
             }
             else {
 
-                  
-                    await collection.updateOne(
-                        { "_id": userId },
-                        {
-                            $inc: { "Number Of Bag": 1 }
-                        }
-                    );
 
-                    // Fetch the updated user to return
-                    let updatedUser = await collection.findOne({ _id: userId });
+                await collection.updateOne(
+                    { "_id": userId },
+                    {
+                        $inc: { "bags": 1 }
+                    }
+                );
 
-                    return response.status(200).send({
-                        'Status': 'Success',
-                        'response': 'Bag added successfully',
-                    });
-                }
+                // Fetch the updated user to return
+
+                return response.status(200).send({
+                    'Status': 'Success',
+                    'response': 'Bag added successfully',
+                });
+            }
 
 
 
