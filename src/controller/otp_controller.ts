@@ -29,7 +29,7 @@ export default class OtpController {
                 "Status": "Failure",
                 "response": "User Not Exist"
             })
-            
+
         } else {
             const otp = await crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit OTP
 
@@ -77,7 +77,7 @@ export default class OtpController {
 
 
 
-       
+
 
     }
 

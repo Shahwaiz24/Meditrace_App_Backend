@@ -8,15 +8,12 @@ interface UserSignUpModel {
     dateofbirth: string;
     medicalInformation: {
         bloodGroup : string,
-        Weight: string,
-        Height : string,
-        Known_Allergies: [],
-        Chronic_Conditions: [],
+        weight: string,
+        height : string,
+        known_Allergies: [],
+        chronic_Conditions: [],
     };
-    emergency_Contact: {
-        contactName: string,
-        contactNumber: number
-    }
+    emergency_Contact: [];
 
 }
 
