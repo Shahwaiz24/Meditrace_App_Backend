@@ -6,6 +6,7 @@ import { UserLoginModel } from "../model/user_login_model";
 import { UserProfileUpdateModel } from "../model/user_profile_update_model";
 import { AddEmergencyContact } from "../model/user_add_emergency_contact_model";
 import { DeleteEmergencyContact } from "../model/user_delete_emergency_contact";
+import userCheckModel from "../model/user_check_model";
 
 class UserController {
     static async signup(request: express.Request, response: express.Response) {
@@ -36,32 +37,27 @@ class UserController {
                     'lastname' : body.lastname.toString(),
                     'email': body.email.toString(),
                     'password': body.password.toString(),
-                    'phone Number': body.phoneNumber.toString(),
+                    'phone_number': body.phoneNumber.toString(),
                     'gender': body.gender.toString(),
                     'birthDate': body.dateofbirth.toString(),
-                    'Number Of Bag': 0,
-                    'BagsDetails': [],
+                    'bags': 0,
+                    'medicines': [],
                     'medical Information': {
-                        "Known_Allergies": body.medicalInformation.Known_Allergies.toString(),
-                        "Chronic_Conditions": body.medicalInformation.Chronic_Conditions.toString(),
-                        "Height": body.medicalInformation.Height.toString(),
-                        "Weight": body.medicalInformation.Weight.toString(),
+                        "Known_Allergies": body.medicalInformation.known_Allergies.toString(),
+                        "Chronic_Conditions": body.medicalInformation.chronic_Conditions.toString(),
+                        "Height": body.medicalInformation.height.toString(),
+                        "Weight": body.medicalInformation.weight.toString(),
                         "Blood_Group": body.medicalInformation.bloodGroup.toString(),
                     },
-                    'emergencyContacts': [
-                        {
-                            "contactName": body.emergency_Contact.contactName.toString(),
-                            "contactNumber": body.emergency_Contact.contactNumber.toString()
-                        },
-                    ]
+                    'emergencyContacts': body.emergency_Contact
+                    
                 };
                 let responsedata = await collection.insertOne(insertingBody);
                 let User_Id = responsedata.insertedId;
-                let userData = await collection.find({ "_id": new ObjectId(User_Id) }).toArray();
                 response.status(200).send({
                     'Status': 'Success',
                     'response': 'User Signuped',
-                    'user Data': userData,
+                    'Id': User_Id,
                 })
             }
         } catch (error) {
@@ -299,6 +295,38 @@ class UserController {
                 "details": error instanceof Error ? error.message : 'Unknown error'
             });
         }
+    }
+    static async checkUser(request: express.Request, response: express.Response) {
+      try {
+          let db: Db = await Database.getDatabase();
+          let body: userCheckModel = request.body;
+          let collection = db.collection("users");
+          let check = {
+              email: body.email
+          }
+          let finding = await collection.find(check).toArray();
+          
+          if (finding.length != 0) {
+              response.status(200).send({
+                  "Status": "Success",
+                  "response": "User Already Exist"
+              })
+              
+            
+          } else {
+              response.status(403).send({
+                  "Status": "Failure",
+                  "response": "User not Exist"
+              });
+          }
+      } catch (error) {
+          console.error("Error in checkUser:", error);
+          return response.status(500).send({
+              "Status": "Error",
+              "response": `${error}`
+          });
+        
+      }
     }
 
 }

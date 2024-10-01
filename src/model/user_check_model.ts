@@ -1,1 +1,3 @@
-export default interface userCheckModel { };
+export default interface userCheckModel { 
+    email: string;
+};
