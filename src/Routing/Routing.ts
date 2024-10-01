@@ -7,10 +7,12 @@ import OtpController from "../controller/otp_controller";
 const UserRouter = express.Router();
 
 UserRouter.post('/signup', UserController.signup);
+UserRouter.post('/change-password', UserController.changePassword)
 UserRouter.post('/send-otp', OtpController.sendOtp);
 UserRouter.post('/login', UserController.login);
 UserRouter.put('/updateProfile', UserController.updateProfile);
 UserRouter.post('/addBag', BagController.addBag);
+UserRouter.post("/check-user",UserController.checkUser)
 UserRouter.post('/addMedication', MedicationController.addMedication);
 UserRouter.post('/addEmergencyContact', UserController.addEmergencyContact);
 UserRouter.post('/deleteEmergencyContact', UserController.deleteEmergencyContact);

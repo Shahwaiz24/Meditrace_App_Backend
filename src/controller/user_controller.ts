@@ -7,6 +7,8 @@ import { UserProfileUpdateModel } from "../model/user_profile_update_model";
 import { AddEmergencyContact } from "../model/user_add_emergency_contact_model";
 import { DeleteEmergencyContact } from "../model/user_delete_emergency_contact";
 import userCheckModel from "../model/user_check_model";
+import changePasswordModel from "../model/change_password_model";
+import getUserModel from "../model/get_usermodel";
 
 class UserController {
     static async signup(request: express.Request, response: express.Response) {
@@ -34,7 +36,7 @@ class UserController {
             else {
                 let insertingBody = {
                     'firstname': body.firstname.toString(),
-                    'lastname' : body.lastname.toString(),
+                    'lastname': body.lastname.toString(),
                     'email': body.email.toString(),
                     'password': body.password.toString(),
                     'phone_number': body.phoneNumber.toString(),
@@ -50,7 +52,7 @@ class UserController {
                         "Blood_Group": body.medicalInformation.bloodGroup.toString(),
                     },
                     'emergencyContacts': body.emergency_Contact
-                    
+
                 };
                 let responsedata = await collection.insertOne(insertingBody);
                 let User_Id = responsedata.insertedId;
@@ -129,7 +131,7 @@ class UserController {
                 // Prepare the fields to update
                 let updateProfile = {
                     'firstname': body.firstname,
-                    'lastname' : body.lastname,
+                    'lastname': body.lastname,
                     'email': body.email,
                     'phone Number': body.phoneNumber,
                     'gender': body.gender,
@@ -296,38 +298,97 @@ class UserController {
         }
     }
     static async checkUser(request: express.Request, response: express.Response) {
-      try {
-          let db: Db = await Database.getDatabase();
-          let body: userCheckModel = request.body;
-          let collection = db.collection("users");
-          let check = {
-              email: body.email
-          }
-          let finding = await collection.find(check).toArray();
-          
-          if (finding.length != 0) {
-              response.status(200).send({
-                  "Status": "Success",
-                  "response": "User Already Exist"
-              })
-              
-            
-          } else {
-              response.status(403).send({
-                  "Status": "Failure",
-                  "response": "User not Exist"
-              });
-          }
-      } catch (error) {
-          console.error("Error in checkUser:", error);
-          return response.status(500).send({
-              "Status": "Error",
-              "response": `${error}`
-          });
-        
-      }
-    }
+        try {
+            let db: Db = await Database.getDatabase();
+            let body: userCheckModel = request.body;
+            let collection = db.collection("users");
+            let check = {
+                email: body.email
+            }
+            let finding = await collection.find(check).toArray();
 
+            if (finding.length != 0) {
+                response.status(200).send({
+                    "Status": "Success",
+                    "response": "User Already Exist"
+                })
+
+
+            } else {
+                response.status(403).send({
+                    "Status": "Failure",
+                    "response": "User not Exist"
+                });
+            }
+        } catch (error) {
+            console.error("Error in checkUser:", error);
+            return response.status(500).send({
+                "Status": "Error",
+                "response": `${error}`
+            });
+
+        }
+    }
+    static async changePassword(request: express.Request, response: express.Response) {
+        try {
+            let db: Db = await Database.getDatabase();
+            let collection = db.collection("users");
+            let body: changePasswordModel = request.body;
+            let id: ObjectId = new ObjectId(body.userId);
+
+            // Check if the user exists in the database
+            let check = await collection.find({ "_id": id }).toArray();
+
+            if (check.length != 0) {
+                // Only update the password
+                let updateData = {
+                    $set: {
+                        'password': body.password.toString()
+                    }
+                };
+
+                // Update the user's password in the database
+                await collection.updateOne({ "_id": id }, updateData);
+
+                return response.status(200).send({
+                    "Status": "Success",
+                    "response": "Password updated successfully"
+                });
+
+            } else {
+                // If the user is not found, return an error response
+                return response.status(404).send({
+                    "Status": "Failure",
+                    "response": "User not found"
+                });
+            }
+
+        } catch (error) {
+            console.error("Error in changePassword:", error);
+            return response.status(500).send({
+                "Status": "Error",
+                "response": "Internal Server Error"
+            });
+        }
+    }
+    static async getUser(request: express.Request, response: express.Response) {
+        try {
+            let db: Db = await Database.getDatabase();
+            let collection = db.collection("users");
+            let body: getUserModel = request.body;
+            let check = await collection.find({ "_id": new ObjectId(body.user_Id) }).toArray();
+            if (check.length != 0) {
+                response.status(200).send({ "Status": "Success", "response": check[0] });
+            } else {
+                response.status(403).send({ "Status": "Failure", "response": "User Not Exist" });
+
+
+            }
+        } catch (error) {
+            response.status(500).send({ "Status": "Error", "response": "Error Fetching User" });
+
+        }
+    }
 }
 
 
