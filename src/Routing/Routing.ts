@@ -10,12 +10,13 @@ UserRouter.post('/signup', UserController.signup);
 UserRouter.post('/change-password', UserController.changePassword)
 UserRouter.post('/send-otp', OtpController.sendOtp);
 UserRouter.post('/login', UserController.login);
-UserRouter.put('/updateProfile', UserController.updateProfile);
+UserRouter.put('/update-profile', UserController.updateProfile);
 UserRouter.post('/addBag', BagController.addBag);
 UserRouter.post("/check-user",UserController.checkUser)
-UserRouter.post('/addMedication', MedicationController.addMedication);
-UserRouter.post('/addEmergencyContact', UserController.addEmergencyContact);
-UserRouter.post('/deleteEmergencyContact', UserController.deleteEmergencyContact);
+UserRouter.post('/add-medicine', MedicationController.addMedicine);
+UserRouter.post('/add-emergencyContact', UserController.addEmergencyContact);
+UserRouter.post('/delete-emergencyContact', UserController.deleteEmergencyContact);
+UserRouter.post('get-user', UserController.getUser);
 
 
 

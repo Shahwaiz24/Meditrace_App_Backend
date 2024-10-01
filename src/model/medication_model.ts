@@ -1,5 +1,7 @@
 // model/medication_model.ts
 
+import { ObjectId } from "mongodb";
+
 type FrequencyDetails =
     | {
 
@@ -14,13 +16,6 @@ type FrequencyDetails =
 
 
 export interface MedicationModel {
-    userid: string;
-    bagname: string;
-    medication: {
-        MedicationName: string;
-        MedicationStrength: string;
-        StrengthUnit: string,
-        Frequency: {},
-        Time: [],
-    };
+    userId: string;
+    medicine: [];
 }
