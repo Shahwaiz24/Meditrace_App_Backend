@@ -5,7 +5,6 @@ import { BagModel } from "../model/bag_model";
 
 interface BagDetail {
     bagname: string;
-    medications: string[]; // Array of medications
 }
 
 export class BagController {
@@ -27,31 +26,11 @@ export class BagController {
                 })
             }
             else {
-                // Check if the bag already exists in BagsDetails
-                let existingBag = user.BagsDetails?.find((bag: BagDetail) => bag.bagname === body.bagname);
 
-                if (existingBag) {
-                    // Bag already exists, return it
-                    return response.status(409).send({
-                        'Status': 'Failure',
-                        'response': 'Bag already exists',
-                    });
-                } else {
-                    // Add the new bag
-                    let newBag: BagDetail = {
-                        bagname: body.bagname,
-                        medications: [] // Initialize with an empty array or add initial medications if any
-                    };
-
-                    // Ensure BagsDetails is initialized
-                    let bagsList: BagDetail[] = user?.BagsDetails || [];
-                    bagsList.push(newBag);
-
-                    // Update the user's BagsDetails and increment the number of bags
+                  
                     await collection.updateOne(
                         { "_id": userId },
                         {
-                            $set: { "BagsDetails": bagsList },
                             $inc: { "Number Of Bag": 1 }
                         }
                     );
@@ -62,12 +41,10 @@ export class BagController {
                     return response.status(200).send({
                         'Status': 'Success',
                         'response': 'Bag added successfully',
-                        'user': updatedUser
                     });
                 }
 
 
-            }
 
         } catch (error) {
             console.error("Add Bag Error:", error instanceof Error ? error.message : error);

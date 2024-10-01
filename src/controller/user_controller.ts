@@ -63,7 +63,7 @@ class UserController {
         } catch (error) {
             console.error("Signup Error:", error instanceof Error ? error.message : error);
             response.status(500).send({
-                "status": "Error",
+                "Status": "Error",
                 "response": "An unexpected error occurred.",
                 "details": error instanceof Error ? error.message : "Unknown error"
             });
@@ -86,9 +86,9 @@ class UserController {
             let collection = database.collection('users');
             let responseCheck = await collection.find(checking).toArray();
 
-            if (responseCheck.length !== 0) {
+            if (responseCheck.length != 0) {
                 return response.status(200).send({
-                    "status": "Success",
+                    "Status": "Success",
                     "response": 'SuccessFuly Logined',
                     'User_Data': responseCheck
                 });
@@ -105,7 +105,7 @@ class UserController {
         } catch (error) {
             console.error("Login Error:", error instanceof Error ? error.message : error);
             response.status(500).send({
-                "status": "Error",
+                "Status": "Error",
                 "response": "An unexpected error occurred.",
                 "details": error instanceof Error ? error.message : "Unknown error"
             });
@@ -128,7 +128,8 @@ class UserController {
             if (responseCheck.length != 0) {
                 // Prepare the fields to update
                 let updateProfile = {
-                    'fullname': body.fullname,
+                    'firstname': body.firstname,
+                    'lastname' : body.lastname,
                     'email': body.email,
                     'phone Number': body.phoneNumber,
                     'gender': body.gender,
@@ -221,7 +222,6 @@ class UserController {
                     return response.status(200).send({
                         "Status": "Success",
                         "response": "Emergency contact added successfully",
-                        "emergencyContacts": updatedUser?.emergencyContacts // Return updated contact list
                     });
                 }
             }
@@ -277,7 +277,6 @@ class UserController {
                     return response.status(200).send({
                         "Status": "Success",
                         "response": "Emergency contact deleted successfully",
-                        "emergencyContacts": updatedUser?.emergencyContacts
                     });
                 } else {
                     // If the contact is not found
