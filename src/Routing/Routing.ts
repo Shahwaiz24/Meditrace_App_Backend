@@ -16,7 +16,7 @@ UserRouter.post("/check-user-signup",UserController.checkUser)
 UserRouter.post('/add-medicine', MedicationController.addMedicine);
 UserRouter.post('/add-emergencyContact', UserController.addEmergencyContact);
 UserRouter.post('/delete-emergencyContact', UserController.deleteEmergencyContact);
-UserRouter.post('get-user', UserController.getUser);
+UserRouter.post('/get-user', UserController.getUser);
 
 
 

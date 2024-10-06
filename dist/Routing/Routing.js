@@ -19,5 +19,5 @@ UserRouter.post("/check-user-signup", user_controller_1.default.checkUser);
 UserRouter.post('/add-medicine', medications_controller_1.MedicationController.addMedicine);
 UserRouter.post('/add-emergencyContact', user_controller_1.default.addEmergencyContact);
 UserRouter.post('/delete-emergencyContact', user_controller_1.default.deleteEmergencyContact);
-UserRouter.post('get-user', user_controller_1.default.getUser);
+UserRouter.post('/get-user', user_controller_1.default.getUser);
 exports.default = UserRouter;
