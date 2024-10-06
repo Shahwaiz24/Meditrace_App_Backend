@@ -9,8 +9,8 @@ const crypto = require('crypto');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'shahwaizafzal90@gmail.com', // Your Gmail
-        pass: 'ovob qtty jvug mimp' // Your Gmail App Password (Make sure to enable 'Less Secure Apps' on Gmail)
+        user: 'meditraceapp@gmail.com', 
+        pass: 'rixx idsz brkf gkts' 
     }
 });
 export default class OtpController {
@@ -35,7 +35,7 @@ export default class OtpController {
              const otp = await crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit OTP
  
              const mailOptions = {
-                 from: 'Meditrace Team <shahwaizafzal90@gmail.com>',
+                 from: 'Meditrace Team <meditraceapp@gmail.com>',
                  to: email,
                  subject: 'Meditrace Account Password Reset OTP',
                  html: `
