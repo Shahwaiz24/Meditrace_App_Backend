@@ -13,7 +13,7 @@ UserRouter.post('/signup', user_controller_1.default.signup);
 UserRouter.post('/change-password', user_controller_1.default.changePassword);
 UserRouter.post('/send-otp', otp_controller_1.default.sendOtp);
 UserRouter.post('/login', user_controller_1.default.login);
-UserRouter.put('/update-profile', user_controller_1.default.updateProfile);
+UserRouter.post('/update-profile', user_controller_1.default.updateProfile);
 UserRouter.post('/addBag', bag_controller_1.BagController.addBag);
 UserRouter.post("/check-user-signup", user_controller_1.default.checkUser);
 UserRouter.post('/add-medicine', medications_controller_1.MedicationController.addMedicine);

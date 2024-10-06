@@ -10,7 +10,7 @@ UserRouter.post('/signup', UserController.signup);
 UserRouter.post('/change-password', UserController.changePassword)
 UserRouter.post('/send-otp', OtpController.sendOtp);
 UserRouter.post('/login', UserController.login);
-UserRouter.put('/update-profile', UserController.updateProfile);
+UserRouter.post('/update-profile', UserController.updateProfile);
 UserRouter.post('/addBag', BagController.addBag);
 UserRouter.post("/check-user-signup",UserController.checkUser)
 UserRouter.post('/add-medicine', MedicationController.addMedicine);
