@@ -27,14 +27,18 @@ export class MedicationController {
                     { _id: userId },
                     { $set: { "medicines": medicines } }
                 );
+                return response.status(200).send({
+                    'Status': 'Success',
+                    'response': 'Medicine Add Succesfully',
+                });
 
 
 
-             
-               
+
+
             }
 
-           
+
 
         } catch (error) {
             console.error("Add Medication Error:", error instanceof Error ? error.message : error);
