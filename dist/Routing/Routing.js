@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const user_controller_1 = __importDefault(require("../controller/user_controller"));
+const bag_controller_1 = require("../controller/bag_controller");
+const medications_controller_1 = require("../controller/medications_controller");
+const otp_controller_1 = __importDefault(require("../controller/otp_controller"));
+const UserRouter = express_1.default.Router();
+UserRouter.post('/signup', user_controller_1.default.signup);
+UserRouter.post('/change-password', user_controller_1.default.changePassword);
+UserRouter.post('/send-otp', otp_controller_1.default.sendOtp);
+UserRouter.post('/login', user_controller_1.default.login);
+UserRouter.put('/update-profile', user_controller_1.default.updateProfile);
+UserRouter.post('/addBag', bag_controller_1.BagController.addBag);
+UserRouter.post("/check-user-signup", user_controller_1.default.checkUser);
+UserRouter.post('/add-medicine', medications_controller_1.MedicationController.addMedicine);
+UserRouter.post('/add-emergencyContact', user_controller_1.default.addEmergencyContact);
+UserRouter.post('/delete-emergencyContact', user_controller_1.default.deleteEmergencyContact);
+UserRouter.post('get-user', user_controller_1.default.getUser);
+exports.default = UserRouter;

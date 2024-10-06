@@ -13,12 +13,11 @@ app.use('/v1/api', UserRouter);
 
 
 
-const port = 5000;
-const hostname = 'localhost'
-
-app.listen(port, hostname, async () => {
-    await Database.connectToDatabase();
-    console.log(`http://${hostname}:${port}/v1/api`);
+const port = parseInt(process.env.PORT as string, 10) || 5000;
+app.listen(port, async () => {
+  await Database.connectToDatabase();
+  console.log(`Server is running on port ${port}`); 
+    
 });
 
 export default app;
