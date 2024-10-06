@@ -32,8 +32,7 @@ export default class OtpController {
              })
  
          } else {
-             const otp = await crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit OTP
- 
+             const otp = await crypto.randomInt(1000, 10000).toString(); // Generate a 4-digit OTP 
              const mailOptions = {
                  from: 'Meditrace Team <meditraceapp@gmail.com>',
                  to: email,
