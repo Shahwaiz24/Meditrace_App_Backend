@@ -3,7 +3,7 @@ interface UserSignUpModel {
     lastname: string;
     email: string;
     password: string;
-    phoneNumber: number;
+    phoneNumber: string;
     gender: string;
     dateofbirth: string;
     medicalInformation: {

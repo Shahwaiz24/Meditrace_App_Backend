@@ -59,7 +59,7 @@ class UserController {
                 response.status(200).send({
                     'Status': 'Success',
                     'response': 'User Signuped',
-                    'Id': User_Id,
+                    'Id': User_Id.toString(),
                 })
             }
         } catch (error) {
