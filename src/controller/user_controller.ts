@@ -45,11 +45,11 @@ class UserController {
                     'bags': 0,
                     'medicines': [],
                     'medical Information': {
-                        "Known_Allergies": body.medicalInformation.known_Allergies.toString(),
-                        "Chronic_Conditions": body.medicalInformation.chronic_Conditions.toString(),
-                        "Height": body.medicalInformation.height.toString(),
-                        "Weight": body.medicalInformation.weight.toString(),
-                        "Blood_Group": body.medicalInformation.bloodGroup.toString(),
+                        "known_Allergies": body.medicalInformation.known_Allergies,
+                        "chronic_Conditions": body.medicalInformation.chronic_Conditions,
+                        "height": body.medicalInformation.height.toString(),
+                        "weight": body.medicalInformation.weight.toString(),
+                        "blood_Group": body.medicalInformation.bloodGroup.toString(),
                     },
                     'emergencyContacts': body.emergency_Contact
 
