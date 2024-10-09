@@ -16,8 +16,8 @@ app.use('/v1/api', UserRouter);
 const port = parseInt(process.env.PORT as string, 10) || 5000;
 app.listen(port, async () => {
   await Database.connectToDatabase();
-  console.log(`Server is running on port ${port}`); 
-    
+  console.log(`Server is running on port ${port}`);
+
 });
 
 export default app;

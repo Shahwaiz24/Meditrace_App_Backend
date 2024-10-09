@@ -70,10 +70,11 @@ class UserController {
             let collection = database.collection('users');
             let responseCheck = await collection.find(checking).toArray();
             if (responseCheck.length != 0) {
+                const userId = responseCheck[0]?._id; // Optional chaining
                 return response.status(200).send({
                     "Status": "Success",
-                    "response": 'SuccessFuly Logined',
-                    'User_Data': responseCheck
+                    "response": 'Successfully Logged In',
+                    'Id': userId.toString()
                 });
             }
             else {
