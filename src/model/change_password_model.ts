@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
 export default interface changePasswordModel {
-    userId: ObjectId;
+    email: string;
     password: string;
  };

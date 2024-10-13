@@ -87,7 +87,7 @@ class UserController {
 
             let collection = database.collection('users');
             let responseCheck = await collection.find(checking).toArray();
-        
+
 
             if (responseCheck.length != 0) {
                 const userId = responseCheck[0]?._id; // Optional chaining
@@ -116,8 +116,8 @@ class UserController {
 
         }
     }
-   
-   
+
+
     static async updateProfile(request: express.Request, response: express.Response) {
         try {
             let database: Db = await Database.getDatabase();
@@ -338,10 +338,12 @@ class UserController {
             let db: Db = await Database.getDatabase();
             let collection = db.collection("users");
             let body: changePasswordModel = request.body;
-            let id: ObjectId = new ObjectId(body.userId);
 
             // Check if the user exists in the database
-            let check = await collection.find({ "_id": id }).toArray();
+            let checking = {
+                email: body.email
+            };
+            let check = await collection.find(checking).toArray();
 
             if (check.length != 0) {
                 // Only update the password
@@ -352,7 +354,7 @@ class UserController {
                 };
 
                 // Update the user's password in the database
-                await collection.updateOne({ "_id": id }, updateData);
+                await collection.updateOne(checking, updateData);
 
                 return response.status(200).send({
                     "Status": "Success",
@@ -389,7 +391,7 @@ class UserController {
 
             }
         } catch (error) {
-            response.status(500).send({ "Status": "Error", "response": "Error Fetching User" });
+            response.status(500).send({ "Status": "Error", "response": "Error Fetching User", 'details': error instanceof Error ? error.message : 'Unknown error' });
 
         }
     }

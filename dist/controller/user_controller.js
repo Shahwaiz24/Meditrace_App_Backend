@@ -285,9 +285,11 @@ class UserController {
             let db = await database_1.default.getDatabase();
             let collection = db.collection("users");
             let body = request.body;
-            let id = new mongodb_1.ObjectId(body.userId);
             // Check if the user exists in the database
-            let check = await collection.find({ "_id": id }).toArray();
+            let checking = {
+                email: body.email
+            };
+            let check = await collection.find(checking).toArray();
             if (check.length != 0) {
                 // Only update the password
                 let updateData = {
@@ -296,7 +298,7 @@ class UserController {
                     }
                 };
                 // Update the user's password in the database
-                await collection.updateOne({ "_id": id }, updateData);
+                await collection.updateOne(checking, updateData);
                 return response.status(200).send({
                     "Status": "Success",
                     "response": "Password updated successfully"
@@ -332,7 +334,7 @@ class UserController {
             }
         }
         catch (error) {
-            response.status(500).send({ "Status": "Error", "response": "Error Fetching User" });
+            response.status(500).send({ "Status": "Error", "response": "Error Fetching User", 'details': error instanceof Error ? error.message : 'Unknown error' });
         }
     }
 }
