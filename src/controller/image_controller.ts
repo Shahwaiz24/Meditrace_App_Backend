@@ -1,0 +1,64 @@
+import express from "express";
+import { Storage } from "@google-cloud/storage";
+import ImageModel from "../model/image-model";
+import { Db, ObjectId } from "mongodb";
+import Database from "../config/database";
+
+export class ImageController {
+    
+    static async ImageAdd(request: express.Request, response: express.Response) {
+        try {
+            let db: Db = await Database.getDatabase();
+            let body : ImageModel = request.body;
+            let userCollection = db.collection("users");
+            let imageCollection = db.collection("user-images");
+            let userId = new ObjectId(body.userId);
+            let user = await userCollection.findOne({ _id: userId });
+            if (!user) {
+                return response.status(404).send({
+                    'Status': 'Failure',
+                    'response': 'User not found',
+                });
+            }
+            else{
+                let imageUrl : string = "";
+                const storage = new Storage();
+                const bucket = storage.bucket('gs://meditrace-app-firestore.appspot.com');
+                const uploadImage = async (filePath: string, fileName: string) => {
+                    let contentType: string;
+
+                    if (fileName.endsWith('.png')) {
+                      contentType = 'image/png';
+                    } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+                      contentType = 'image/jpeg';
+                    } else {
+                      throw new Error('Unsupported file type. Only PNG and JPEG images are allowed.');
+                    }
+                    await bucket.upload(filePath, {
+                      destination: fileName,
+                      metadata: {
+                        contentType: contentType 
+                      },
+                    },
+            
+                   
+                );
+                const file = bucket.file(fileName);
+                 imageUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+                }
+            }
+
+
+          
+
+          
+            
+        } catch (error) {
+            console.error(error);
+            return response.status(500).send({
+                "Status": "Failure",
+                "response": "Internal server error"
+            });
+        }
+    }
+}
