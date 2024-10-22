@@ -8,12 +8,13 @@ const user_controller_1 = __importDefault(require("../controller/user_controller
 const bag_controller_1 = require("../controller/bag_controller");
 const medications_controller_1 = require("../controller/medications_controller");
 const otp_controller_1 = __importDefault(require("../controller/otp_controller"));
+const image_controller_1 = require("../controller/image_controller");
 const UserRouter = express_1.default.Router();
 UserRouter.post('/signup', user_controller_1.default.signup);
 UserRouter.post('/change-password', user_controller_1.default.changePassword);
 UserRouter.post('/send-otp', otp_controller_1.default.sendOtp);
 UserRouter.post('/login', user_controller_1.default.login);
-UserRouter.post('/update-profile', user_controller_1.default.updateProfile);
+UserRouter.post('/update-profile', image_controller_1.UpdateProfileController.UpdateProfile);
 UserRouter.post('/addBag', bag_controller_1.BagController.addBag);
 UserRouter.post("/check-user-signup", user_controller_1.default.checkUser);
 UserRouter.post('/add-medicine', medications_controller_1.MedicationController.addMedicine);

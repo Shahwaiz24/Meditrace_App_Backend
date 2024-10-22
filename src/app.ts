@@ -15,10 +15,10 @@ app.use('/v1/api', UserRouter);
 
 
 const port = parseInt(process.env.PORT as string, 10) || 5000;
-app.listen(port, async () => {
+app.listen(port,"localhost", async () => {
   await Database.connectToDatabase();
   await FirebaseConfig.initializeFirebaseApp();
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port https://localhost:${port}/v1/api`);
 
 });
 

@@ -4,7 +4,7 @@ import UpdateProfileModel from "../model/update-profile";
 import { Db, ObjectId } from "mongodb";
 import Database from "../config/database";
 
-export class ImageController {
+export class UpdateProfileController {
     
     static async UpdateProfile(request: express.Request, response: express.Response) {
         try {
@@ -46,7 +46,28 @@ export class ImageController {
                 const file = bucket.file(fileName);
                  imageUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
                 }
-                
+
+                let insertingImageBody  = {
+                  "user-image" : imageUrl,
+                  "user-Id" : body.userId.toString()                };
+                let imageResponse = await imageCollection.insertOne(
+                  insertingImageBody
+                );
+                let imageid = imageResponse.insertedId.toString();
+
+               await userCollection.updateOne({_id : userId},{$set: {
+                  "firstname" : body.userfirstName.toString(),
+                  "lastname" : body.userlastName.toString(),
+                  "image-id" : imageid.toString(),
+                  "email" : body.useremail.toString(),
+                  "birthDate" : body.userdateOfbirth.toString(),
+                  "phone_number" : body.usernumber.toString()
+                }});
+                response.status(200).send({
+                  "Status" : "Success",
+                  "response" : "Successfully Updated"
+                });
+
 
             }
 
@@ -59,7 +80,7 @@ export class ImageController {
             console.error(error);
             return response.status(500).send({
                 "Status": "Failure",
-                "response": "Internal server error"
+                "response": `Internal server error ${error}`
             });
         }
     }

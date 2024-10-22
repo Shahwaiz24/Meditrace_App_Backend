@@ -3,6 +3,7 @@ import UserController from "../controller/user_controller";
 import { BagController } from "../controller/bag_controller";
 import { MedicationController } from "../controller/medications_controller";
 import OtpController from "../controller/otp_controller";
+import { UpdateProfileController } from "../controller/image_controller";
 
 const UserRouter = express.Router();
 
@@ -10,7 +11,7 @@ UserRouter.post('/signup', UserController.signup);
 UserRouter.post('/change-password', UserController.changePassword)
 UserRouter.post('/send-otp', OtpController.sendOtp);
 UserRouter.post('/login', UserController.login);
-UserRouter.post('/update-profile', UserController.updateProfile);
+UserRouter.post('/update-profile', UpdateProfileController.UpdateProfile);
 UserRouter.post('/addBag', BagController.addBag);
 UserRouter.post("/check-user-signup",UserController.checkUser)
 UserRouter.post('/add-medicine', MedicationController.addMedicine);
