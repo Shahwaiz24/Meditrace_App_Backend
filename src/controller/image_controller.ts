@@ -1,15 +1,15 @@
 import express from "express";
 import { Storage } from "@google-cloud/storage";
-import ImageModel from "../model/image-model";
+import UpdateProfileModel from "../model/update-profile";
 import { Db, ObjectId } from "mongodb";
 import Database from "../config/database";
 
 export class ImageController {
     
-    static async ImageAdd(request: express.Request, response: express.Response) {
+    static async UpdateProfile(request: express.Request, response: express.Response) {
         try {
             let db: Db = await Database.getDatabase();
-            let body : ImageModel = request.body;
+            let body : UpdateProfileModel = request.body;
             let userCollection = db.collection("users");
             let imageCollection = db.collection("user-images");
             let userId = new ObjectId(body.userId);
@@ -46,6 +46,8 @@ export class ImageController {
                 const file = bucket.file(fileName);
                  imageUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
                 }
+                
+
             }
 
 
