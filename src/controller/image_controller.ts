@@ -25,10 +25,8 @@ export class UpdateProfileController {
           // Remove the Base64 prefix (if present)
           const base64Data = body.image.replace(/^data:image\/\w+;base64,/, "");
 
-          // Convert Base64 string to Buffer
           const buffer = Buffer.from(base64Data, 'base64');
 
-          // Generate a random file name for the image
           const fileName = crypto.randomBytes(16).toString('hex') + '.jpg'; // Change extension based on image type
 
           // Create a temporary file path to save the image before uploading
@@ -38,7 +36,10 @@ export class UpdateProfileController {
           fs.writeFileSync(tempFilePath, buffer);
 
           // Upload the temporary file to Firebase Cloud Storage
-          const storage = new Storage();
+          const storage = new Storage({
+            projectId: "meditrace-app-firestore",
+            keyFilename: path.resolve(__dirname, '../admin-sdk.json')
+          });
           const bucket = storage.bucket('gs://meditrace-app-firestore.appspot.com');
           await bucket.upload(tempFilePath, {
             destination: fileName,
