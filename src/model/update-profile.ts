@@ -5,6 +5,6 @@ export default interface UpdateProfileModel {
     userdateOfbirth : string;
     useremail : string;
     usernumber : string;
-    image: File;
+    image: string;
     uploadDate : string,
 }
