@@ -323,14 +323,26 @@ class UserController {
     static async getUser(request, response) {
         try {
             let db = await database_1.default.getDatabase();
-            let collection = db.collection("users");
+            let usersCollection = db.collection("users");
+            let imagesCollection = db.collection("user-images"); // New collection for user images
             let body = request.body;
-            let check = await collection.find({ "_id": new mongodb_1.ObjectId(body.user_Id) }).toArray();
-            if (check.length != 0) {
-                response.status(200).send({ "Status": "Success", "response": check[0] });
+            // Check if the user exists
+            let userCheck = await usersCollection.find({ "_id": new mongodb_1.ObjectId(body.user_Id) }).toArray();
+            if (userCheck.length === 0) {
+                return response.status(403).send({ "Status": "Failure", "response": "User Not Exist" });
             }
             else {
-                response.status(403).send({ "Status": "Failure", "response": "User Not Exist" });
+                let userData = userCheck[0];
+                // Check for "image-id" key in user data
+                if (userData['image-id']) {
+                    // Search for the corresponding image in the "user-images" collection
+                    let imageCheck = await imagesCollection.find({ "_id": new mongodb_1.ObjectId(userData['image-id']) }).toArray();
+                    if (imageCheck.length > 0) {
+                        // Add "user-profile-picture" to the response
+                        userData['user-profile-picture'] = imageCheck[0];
+                    }
+                }
+                response.status(200).send({ "Status": "Success", "response": userData });
             }
         }
         catch (error) {

@@ -377,24 +377,36 @@ class UserController {
             });
         }
     }
+    
     static async getUser(request: express.Request, response: express.Response) {
         try {
             let db: Db = await Database.getDatabase();
-            let collection = db.collection("users");
+            let usersCollection = db.collection("users");
+            let imagesCollection = db.collection("user-images"); // New collection for user images
             let body: getUserModel = request.body;
-            let check = await collection.find({ "_id": new ObjectId(body.user_Id) }).toArray();
-            if (check.length != 0) {
-                response.status(200).send({ "Status": "Success", "response": check[0] });
-            } else {
-                response.status(403).send({ "Status": "Failure", "response": "User Not Exist" });
+    
+            // Check if the user exists
+            let userCheck = await usersCollection.find({ "_id": new ObjectId(body.user_Id) }).toArray();
+            if (userCheck.length === 0) {
+                return response.status(403).send({ "Status": "Failure", "response": "User Not Exist" });
+            }else{
+                let userData = userCheck[0];
+                if (userData['image-id']) {
+                    let imageCheck = await imagesCollection.find({ "_id": new ObjectId(userData['image-id']) }).toArray();
+                    if (imageCheck.length > 0) {
+                        userData['user-profile-picture'] = imageCheck[1];
+                    }
+                }
 
-
+                response.status(200).send({ "Status": "Success", "response": userData });
             }
+    
+           
         } catch (error) {
             response.status(500).send({ "Status": "Error", "response": "Error Fetching User", 'details': error instanceof Error ? error.message : 'Unknown error' });
-
         }
     }
+    
 }
 
 
