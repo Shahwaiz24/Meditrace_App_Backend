@@ -56,7 +56,6 @@ export class UpdateProfileController {
           action: 'read',
           expires: '01-01-3000',
         });
-        
         imageUrl = signedUrl[0]; 
         await fs.promises.unlink(tempFilePath);
       }
