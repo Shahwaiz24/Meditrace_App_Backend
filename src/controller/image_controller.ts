@@ -44,17 +44,20 @@ export class UpdateProfileController {
         const bucket = await FirebaseConfig.getfirebaseBucket();
 
         // Upload the image to Firebase Storage
+        const folderPath = `images/${fileName}`;
         await bucket.upload(tempFilePath, {
-          destination: fileName,
+          destination: folderPath,
           metadata: {
             contentType: 'image/jpeg',
           },
         });
-
-        // Generate the public URL for the uploaded image
-        imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-
-        // Delete the temporary file
+        const file = bucket.file(folderPath);
+        const signedUrl = await file.getSignedUrl({
+          action: 'read',
+          expires: '01-01-3000',
+        });
+        
+        imageUrl = signedUrl[0]; 
         await fs.promises.unlink(tempFilePath);
       }
 
@@ -83,7 +86,6 @@ export class UpdateProfileController {
         }
       );
 
-      // Send success response
    response.status(200).send({
         Status: "Success",
         response: "Successfully Updated",
