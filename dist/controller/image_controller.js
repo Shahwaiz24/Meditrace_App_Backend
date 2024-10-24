@@ -30,7 +30,6 @@ exports.UpdateProfileController = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
-const dotenv = __importStar(require("dotenv"));
 const crypto = __importStar(require("crypto"));
 const mongodb_1 = require("mongodb");
 const database_1 = __importDefault(require("../config/database"));
@@ -38,15 +37,15 @@ const firebase_config_1 = __importDefault(require("../config/firebase-config"));
 class UpdateProfileController {
     static async UpdateProfile(request, response) {
         try {
-            let db = await database_1.default.getDatabase();
-            dotenv.config();
-            let body = request.body;
-            let userCollection = db.collection("users");
-            let imageCollection = db.collection("user-images");
+            await firebase_config_1.default.initializeFirebaseApp();
+            const db = await database_1.default.getDatabase();
+            const body = request.body;
+            const userCollection = db.collection("users");
+            const imageCollection = db.collection("user-images");
             // Find user by ID
-            let user = await userCollection.findOne({ _id: new mongodb_1.ObjectId(body.userId) });
+            const user = await userCollection.findOne({ _id: new mongodb_1.ObjectId(body.userId) });
             if (!user) {
-                return response.status(404).send({
+                response.status(404).send({
                     Status: "Failure",
                     response: "User not found",
                 });
@@ -54,16 +53,15 @@ class UpdateProfileController {
             let imageUrl = "";
             // Check if Base64 image is present in the request body
             if (body.image) {
-                // Remove the Base64 prefix (if present)
+                // Process Base64 image
                 const base64Data = body.image.replace(/^data:image\/\w+;base64,/, "");
                 const buffer = Buffer.from(base64Data, 'base64');
                 const fileName = crypto.randomBytes(16).toString('hex') + '.jpg';
                 const tempFilePath = path.join(os.tmpdir(), fileName);
                 // Write the buffer to a temporary file
-                fs.writeFileSync(tempFilePath, buffer);
+                await fs.promises.writeFile(tempFilePath, buffer);
                 // Get the Firebase bucket
-                await firebase_config_1.default.initializeFirebaseApp();
-                let bucket = await firebase_config_1.default.getfirebaseBucket();
+                const bucket = await firebase_config_1.default.getfirebaseBucket();
                 // Upload the image to Firebase Storage
                 await bucket.upload(tempFilePath, {
                     destination: fileName,
@@ -72,39 +70,38 @@ class UpdateProfileController {
                     },
                 });
                 // Generate the public URL for the uploaded image
-                const file = bucket.file(fileName);
-                imageUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+                imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
                 // Delete the temporary file
-                fs.unlinkSync(tempFilePath);
+                await fs.promises.unlink(tempFilePath);
             }
             // Prepare image data for MongoDB
-            let insertingImageBody = {
+            const insertingImageBody = {
                 "user-image": imageUrl,
                 "user-Id": body.userId.toString(),
             };
             // Insert image data into the user-images collection
-            let imageResponse = await imageCollection.insertOne(insertingImageBody);
-            let imageid = imageResponse.insertedId.toString();
+            const imageResponse = await imageCollection.insertOne(insertingImageBody);
+            const imageid = imageResponse.insertedId.toString();
             // Update user profile with new details
             await userCollection.updateOne({ _id: new mongodb_1.ObjectId(body.userId) }, {
                 $set: {
-                    firstname: body.userfirstName.toString(),
-                    lastname: body.userlastName.toString(),
+                    firstname: body.userfirstName,
+                    lastname: body.userlastName,
                     "image-id": imageid,
-                    email: body.useremail.toString(),
-                    birthDate: body.userdateOfbirth.toString(),
-                    phone_number: body.usernumber.toString(),
+                    email: body.useremail,
+                    birthDate: body.userdateOfbirth,
+                    phone_number: body.usernumber,
                 },
             });
             // Send success response
-            return response.status(200).send({
+            response.status(200).send({
                 Status: "Success",
                 response: "Successfully Updated",
             });
         }
         catch (error) {
             console.error(error);
-            return response.status(500).send({
+            response.status(500).send({
                 Status: "Failure",
                 response: `Internal server error: ${error}`,
             });

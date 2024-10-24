@@ -12,17 +12,16 @@ import FirebaseConfig from '../config/firebase-config';
 export class UpdateProfileController {
   static async UpdateProfile(request: express.Request, response: express.Response) {
     try {
-      let db: Db = await Database.getDatabase();
-      let body: UpdateProfileModel = request.body;
-      let userCollection = db.collection("users");
-      let imageCollection = db.collection("user-images");
-      
+      await FirebaseConfig.initializeFirebaseApp();
+      const db: Db = await Database.getDatabase();
+      const body: UpdateProfileModel = request.body;
+      const userCollection = db.collection("users");
+      const imageCollection = db.collection("user-images");
 
       // Find user by ID
-      let user = await userCollection.findOne({ _id: new ObjectId(body.userId) });
-
+      const user = await userCollection.findOne({ _id: new ObjectId(body.userId) });
       if (!user) {
-        return response.status(404).send({
+    response.status(404).send({
           Status: "Failure",
           response: "User not found",
         });
@@ -32,68 +31,66 @@ export class UpdateProfileController {
 
       // Check if Base64 image is present in the request body
       if (body.image) {
-        // Remove the Base64 prefix (if present)
+        // Process Base64 image
         const base64Data = body.image.replace(/^data:image\/\w+;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');
         const fileName = crypto.randomBytes(16).toString('hex') + '.jpg'; 
         const tempFilePath = path.join(os.tmpdir(), fileName);
 
         // Write the buffer to a temporary file
-        fs.writeFileSync(tempFilePath, buffer);
+        await fs.promises.writeFile(tempFilePath, buffer);
 
         // Get the Firebase bucket
-        await FirebaseConfig.initializeFirebaseApp();
-        let bucket = await FirebaseConfig.getfirebaseBucket();
+        const bucket = await FirebaseConfig.getfirebaseBucket();
 
         // Upload the image to Firebase Storage
         await bucket.upload(tempFilePath, {
           destination: fileName,
           metadata: {
-            contentType: 'image/jpeg', 
+            contentType: 'image/jpeg',
           },
         });
 
         // Generate the public URL for the uploaded image
-        const file = bucket.file(fileName);
-        imageUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+        imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
 
         // Delete the temporary file
-        fs.unlinkSync(tempFilePath);
+        await fs.promises.unlink(tempFilePath);
       }
 
       // Prepare image data for MongoDB
-      let insertingImageBody = {
+      const insertingImageBody = {
         "user-image": imageUrl,
         "user-Id": body.userId.toString(),
       };
 
       // Insert image data into the user-images collection
-      let imageResponse = await imageCollection.insertOne(insertingImageBody);
-      let imageid = imageResponse.insertedId.toString();
+      const imageResponse = await imageCollection.insertOne(insertingImageBody);
+      const imageid = imageResponse.insertedId.toString();
 
       // Update user profile with new details
       await userCollection.updateOne(
         { _id: new ObjectId(body.userId) },
         {
           $set: {
-            firstname: body.userfirstName.toString(),
-            lastname: body.userlastName.toString(),
+            firstname: body.userfirstName,
+            lastname: body.userlastName,
             "image-id": imageid,
-            email: body.useremail.toString(),
-            birthDate: body.userdateOfbirth.toString(),
-            phone_number: body.usernumber.toString(),
+            email: body.useremail,
+            birthDate: body.userdateOfbirth,
+            phone_number: body.usernumber,
           },
         }
       );
 
       // Send success response
-      return response.status(200).send({
+   response.status(200).send({
         Status: "Success",
         response: "Successfully Updated",
       });
     } catch (error) {
       console.error(error);
-      return response.status(500).send({
+ response.status(500).send({
         Status: "Failure",
         response: `Internal server error: ${error}`,
       });

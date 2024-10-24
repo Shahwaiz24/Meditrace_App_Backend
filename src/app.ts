@@ -9,8 +9,7 @@ import FirebaseConfig from './config/firebase-config';
 const app: express.Application = express();
 
 app.use(express.json());
-app.use(dotenv.config);
-
+// app.use(FirebaseConfig.initializeFirebaseApp);
 app.use(AppLoger);
 
 app.use('/v1/api', UserRouter);

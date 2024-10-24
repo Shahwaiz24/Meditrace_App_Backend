@@ -9,6 +9,7 @@ const database_1 = __importDefault(require("./config/database"));
 const Routing_1 = __importDefault(require("./Routing/Routing"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+// app.use(FirebaseConfig.initializeFirebaseApp);
 app.use(app_loger_1.default);
 app.use('/v1/api', Routing_1.default);
 const port = parseInt(process.env.PORT, 10) || 5000;
