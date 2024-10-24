@@ -30,6 +30,7 @@ exports.UpdateProfileController = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
+const dotenv = __importStar(require("dotenv"));
 const crypto = __importStar(require("crypto"));
 const mongodb_1 = require("mongodb");
 const database_1 = __importDefault(require("../config/database"));
@@ -38,6 +39,7 @@ class UpdateProfileController {
     static async UpdateProfile(request, response) {
         try {
             let db = await database_1.default.getDatabase();
+            dotenv.config();
             let body = request.body;
             let userCollection = db.collection("users");
             let imageCollection = db.collection("user-images");

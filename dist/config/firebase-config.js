@@ -26,21 +26,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const admin = __importStar(require("firebase-admin"));
 const dotenv = __importStar(require("dotenv"));
 const path = __importStar(require("path"));
-// Load environment variables from .env file
-dotenv.config();
 class FirebaseConfig {
-    static async initializeFirebaseApp() {
-        if (!admin.apps.length) { // Check if Firebase is already initialized
-            const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-            if (!serviceAccountPath) {
-                throw new Error("Service account path not set in environment variables");
-            }
+    static initializeFirebaseApp() {
+        dotenv.config();
+        if (!admin.apps.length) {
+            const serviceAccountPath = process.env.SERVICE_ACCOUNT_PATH || "../Meditrace_App_Backend/admin-sdk.json"; // Default path if env var not set
             const serviceAccount = require(path.resolve(__dirname, serviceAccountPath));
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
-                storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'meditrace-app-firestore.appspot.com', // Default if not set
+                storageBucket: 'meditrace-app-firestore.appspot.com',
             });
-            console.log("Firebase initialized with service account from environment");
+            console.log("Firebase initialized with service account from:", serviceAccountPath);
         }
         else {
             console.log("Firebase already initialized");

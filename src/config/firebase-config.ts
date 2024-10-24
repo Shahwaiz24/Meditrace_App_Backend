@@ -1,32 +1,31 @@
 import * as admin from 'firebase-admin';
-import * as dotenv from 'dotenv';
 import * as path from 'path';
 
-// Load environment variables from .env file
-dotenv.config();
-
 export default class FirebaseConfig {
-  static async initializeFirebaseApp() {
-    if (!admin.apps.length) { // Check if Firebase is already initialized
-      const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-
-      if (!serviceAccountPath) {
-        throw new Error("Service account path not set in environment variables");
+  static initializeFirebaseApp() {
+ 
+    try {
+      
+      if (!admin.apps.length) {
+        const serviceAccountPath = process.env.SERVICE_ACCOUNT_PATH;  
+  
+        const serviceAccount = require(path.resolve(__dirname, serviceAccountPath!));
+  
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          storageBucket: 'meditrace-app-firestore.appspot.com',
+        });
+  
+        console.log("Firebase initialized with service account from:", serviceAccountPath);
+      } else {
+        console.log("Firebase already initialized");
       }
-
-      const serviceAccount = require(path.resolve(__dirname, serviceAccountPath));
-
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'meditrace-app-firestore.appspot.com', // Default if not set
-      });
-
-      console.log("Firebase initialized with service account from environment");
-    } else {
-      console.log("Firebase already initialized");
+    } catch (error) {
+      throw new Error(`Error while Initialize ${error}`);
     }
   }
-  static async getfirebaseBucket(){
+  
+  static async getfirebaseBucket() {
     return await admin.storage().bucket();
   }
 }
