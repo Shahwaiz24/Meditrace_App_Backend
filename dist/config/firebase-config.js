@@ -38,13 +38,16 @@ class FirebaseConfig {
             const serviceAccount = require(path.resolve(__dirname, serviceAccountPath));
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
-                storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'gs://meditrace-app-firestore.appspot.com', // Default if not set
+                storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'meditrace-app-firestore.appspot.com', // Default if not set
             });
             console.log("Firebase initialized with service account from environment");
         }
         else {
             console.log("Firebase already initialized");
         }
+    }
+    static async getfirebaseBucket() {
+        return await admin.storage().bucket();
     }
 }
 exports.default = FirebaseConfig;
