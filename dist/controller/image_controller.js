@@ -49,30 +49,24 @@ class UpdateProfileController {
                     // Remove the Base64 prefix (if present)
                     const base64Data = body.image.replace(/^data:image\/\w+;base64,/, "");
                     const buffer = Buffer.from(base64Data, 'base64');
-                    const fileName = crypto.randomBytes(16).toString('hex') + '.jpg'; // Change extension based on image type
-                    // Create a temporary file path to save the image before uploading
+                    const fileName = crypto.randomBytes(16).toString('hex') + '.jpg';
                     const tempFilePath = path.join(os.tmpdir(), fileName);
-                    // Write the buffer to a temporary file
                     fs.writeFileSync(tempFilePath, buffer);
-                    // Upload the temporary file to Firebase Cloud Storage
                     const storage = new storage_1.Storage({
                         projectId: "meditrace-app-firestore",
-                        keyFilename: path.resolve(__dirname, '../admin-sdk.json')
+                        keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
                     });
-                    const bucket = storage.bucket('gs://meditrace-app-firestore.appspot.com');
+                    const bucket = storage.bucket('meditrace-app-firestore.appspot.com');
                     await bucket.upload(tempFilePath, {
                         destination: fileName,
                         metadata: {
-                            contentType: 'image/jpeg', // Adjust this based on the file type (e.g., png)
+                            contentType: 'image/jpeg',
                         },
                     });
-                    // Get the public URL of the uploaded file
                     const file = bucket.file(fileName);
                     imageUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
-                    // Delete the temporary file after upload
                     fs.unlinkSync(tempFilePath);
                 }
-                // Save the image URL and other details to MongoDB
                 let insertingImageBody = {
                     "user-image": imageUrl,
                     "user-Id": body.userId.toString(),
